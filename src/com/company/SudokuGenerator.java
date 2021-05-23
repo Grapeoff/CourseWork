@@ -3,15 +3,19 @@ package com.company;
 import java.util.*;
 
 public class SudokuGenerator {
+
+    //Единственный экземпляр класса SudokuGenerator
     private static SudokuGenerator instance;
 
+    private SudokuGenerator(){};
+
+    //Метод получения единственного экземпляра класса
     public static SudokuGenerator getInstance(){
         if (instance == null){
             instance = new SudokuGenerator();
         }
         return instance;
     }
-    public static int[][] current;
 
     public int[][] generate(){
         int[][] arr = createBase(9);
@@ -22,7 +26,6 @@ public class SudokuGenerator {
 
     public int[][] mix(int[][] table, int counter, int exit){
         int[][] arr = transposing(swapColsArea(swapRowsArea(swapColsSmall(swapRowsSmall(table)))));
-        current = arr;
 
         if (counter == exit){
             return arr;
@@ -32,26 +35,30 @@ public class SudokuGenerator {
         return mix(arr,n,exit);
     }
 
+    // Создается латинский квадрат
     public int[][] createBase(int difficulty){
         int[][] arr = new int[difficulty][difficulty];
         for (int i = 0; i < difficulty; i++){
             for(int j = 0; j < difficulty; j++){
-                arr[i][j] = ((i*3) + (i/3) % (3*3) + 1);
+                arr[i][j] = ((i * 3) + (i / 3) + j) % (3 * 3) + 1;
             }
         }
+
         return arr;
     }
 
+    // перевод из строчек в колонки
     public int[][] transposing(int[][] table) {
         int[][] arr = new int[table.length][table.length];
         for (int i = 0; i < arr.length; i++) {
             for (int j = 0; j < arr.length; j++) {
-                arr[i][j] = table[i][j];
+                arr[j][i] = table[i][j];
             }
         }
         return arr;
     }
 
+    // смена 2 случайных разных рядов в случаном регионе
     public int[][] swapRowsSmall(int[][] table){
         Random rnd = new Random();
         int region = rnd.nextInt(3);
@@ -80,6 +87,7 @@ public class SudokuGenerator {
         return arr;
     }
 
+    // смена 2 случайных разных колонок в случаном регионе
     public int[][] swapColsSmall(int[][] table){
         Random rnd = new Random();
         int region = rnd.nextInt(3);
@@ -98,7 +106,7 @@ public class SudokuGenerator {
                     arr[i][col1] = table[i][col2];
                     continue;
                 }else if(j == col2){
-                    arr[i][col2] = table[i][col2];
+                    arr[i][col2] = table[i][col1];
                     continue;
                 }
                 arr[i][j] = table[i][j];
@@ -106,6 +114,8 @@ public class SudokuGenerator {
         }
         return arr;
     }
+
+    // смена 2 случайных регионов по Х
     public int[][] swapRowsArea(int[][] table){
         Random rnd = new Random();
         int region1 = rnd.nextInt(3);
@@ -138,6 +148,7 @@ public class SudokuGenerator {
         return arr;
     }
 
+    // смена 2 случайных регионов по Y
     public int[][] swapColsArea(int[][] table){
         Random rnd = new Random();
         int region1 = rnd.nextInt(3);
@@ -170,9 +181,10 @@ public class SudokuGenerator {
         return arr;
     }
 
+    // генерация случайного ряда или колонки в зависимости от региона
     public int getRandomFromRegion(int region){
         int min = 3 * region;
-        int max = min * 3;
+        int max = min + 3;
 
         return new Random().ints(min,max).findFirst().getAsInt();
     }

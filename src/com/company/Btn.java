@@ -7,9 +7,9 @@ public class Btn extends JButton {
 
     public Btn(int x, int y, int width, int heigth, Container container) {
         setBounds(x,y,width,heigth);
-        setBackground(Color.ORANGE);
+        setBackground(Color.YELLOW);
         setFocusPainted(false);
-        setBorder(BorderFactory.createLineBorder(Color.BLACK,2));
+        setBorder(BorderFactory.createLineBorder(Color.WHITE,2));
 
         container.add(this);
     }
